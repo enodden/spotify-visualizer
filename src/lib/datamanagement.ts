@@ -52,13 +52,24 @@ export const aggregateData = (
     const year = date.format("YYYY");
     const month = date.format("MM");
     const day = date.format("DD");
+    const entry = event.artist + "-" + event.song;
 
     if (!aggregatedList[year]) aggregatedList[year] = {};
 
     if (!aggregatedList[year][month]) aggregatedList[year][month] = {};
 
-    aggregatedList[year][month][day] =
-      (aggregatedList[year][month][day] || 0) + 1;
+    if (!aggregatedList[year][month][day])
+      aggregatedList[year][month][day] = {};
+
+    if (entry in aggregatedList[year][month][day]) {
+      aggregatedList[year][month][day][entry].count += 1;
+    } else {
+      aggregatedList[year][month][day][entry] = {
+        song: event.song,
+        artist: event.artist,
+        count: 1,
+      };
+    }
   });
 
   Object.keys(aggregatedList).forEach((year) => {
@@ -71,7 +82,7 @@ export const aggregateData = (
       const daysInMonth = dayjs(year + "/" + month).daysInMonth();
       for (let i = 0; i < daysInMonth; i++) {
         if (!aggregatedList[year][month][dayNumberToString[i]])
-          aggregatedList[year][month][dayNumberToString[i]] = 0;
+          aggregatedList[year][month][dayNumberToString[i]] = {};
       }
     });
   });
@@ -83,16 +94,14 @@ export const calculateYearlyCount = (aggregatedData: NestedAggregation) => {
   const yearlyCount: { [year: string]: number } = {};
 
   Object.keys(aggregatedData).forEach((year) => {
-    let totalCount = 0;
-
+    yearlyCount[year] = 0;
     Object.values(aggregatedData[year]).forEach((month) => {
-      totalCount += Object.values(month).reduce(
-        (a: number, b: number) => a + b,
-        0
-      );
+      Object.values(month).forEach((day) => {
+        Object.values(day).forEach((entry) => {
+          yearlyCount[year] += entry.count;
+        });
+      });
     });
-
-    yearlyCount[year] = totalCount;
   });
 
   const labels = Object.keys(yearlyCount).sort();
@@ -110,10 +119,12 @@ export const calculateMonthlyCount = (
   const monthlyCount: { [month: string]: number } = {};
 
   Object.keys(aggregatedData[year]).forEach((month) => {
-    monthlyCount[month] = Object.values(aggregatedData[year][month]).reduce(
-      (total: number, count: number) => total + count,
-      0
-    );
+    monthlyCount[month] = 0;
+    Object.values(aggregatedData[year][month]).forEach((day) => {
+      Object.values(day).forEach((entry) => {
+        monthlyCount[month] += entry.count;
+      });
+    });
   });
 
   const labels = Object.keys(monthlyCount).sort();
@@ -136,7 +147,12 @@ export const calculateDailyCount = (
   const dailyCount: { [day: string]: number } = {};
 
   Object.keys(aggregatedData[year][month]).forEach((day) => {
-    dailyCount[day] = aggregatedData[year][month][day];
+    dailyCount[day] = 0;
+
+    Object.values(aggregatedData[year][month][day]).forEach((entry) => {
+      dailyCount[day] += entry.count;
+    });
+    //dailyCount[day] = aggregatedData[year][month][day];
   });
 
   const labels = Object.keys(dailyCount).sort();

@@ -10,7 +10,13 @@ export type AppContextType = {
 export type NestedAggregation = {
   [year: string]: {
     [month: string]: {
-      [day: string]: number;
+      [day: string]: {
+        [entry: string]: {
+          song: string;
+          artist: string;
+          count: number;
+        };
+      };
     };
   };
 };
