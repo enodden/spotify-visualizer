@@ -109,7 +109,7 @@ export const WelcomePage = () => {
           <span>&copy;</span> Oliver Borg
         </p>
         <a
-          href="https://github.com/xahen/spotify-visualizer"
+          href="https://github.com/enodden/spotify-visualizer"
           target="_blank"
           rel="noopener noreferrer"
           className="mt-0.5"
