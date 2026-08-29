@@ -5,7 +5,7 @@ Visualizes your downloaded Spotify data, giving you interesting and nostalgic hi
 
 WIP - Fairly early build atm.
 
-[Try it out now!](https://spotifyvisualizer.vercel.app/)
+[Try it out now!](https://spotify.enodden.eu/)
 
 ## Statistics page overview
 ![stats_page](https://github.com/user-attachments/assets/a573e4d6-4b31-465c-9fcd-df872d347d29)
